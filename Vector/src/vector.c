@@ -8,7 +8,8 @@ struct Vector {
 
 static inline Vector VECTOR_vinit() {
   return (Vector) {
-    .data = malloc(sizeof(T) * 16).size = 0;
+    .data = malloc(sizeof(T) * 16);
+    .size = 0;
     .capacity = 16;
   }
 }
@@ -48,7 +49,7 @@ static inline T VECTOR_vremove(Vector *self) {
   T tmp = self->data[self->size];
 
   if (self->capacity >= self->size * 3)
-    resize(self)
+    resize(self);
 
   return tmp;
 }
