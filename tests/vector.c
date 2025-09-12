@@ -3,17 +3,26 @@
 
 #include "ctest.h"
 
-CTEST(Vec_test, init_is_correctly) {
+CTEST_DATA(Vec_test) {
     Vector v;
-    vinit(&v);
-    ASSERT_EQUAL(v.data[v.size], 0);
-    ASSERT_EQUAL(v.size, 0);
-    ASSERT_EQUAL(v.capacity, 16);
+};
+
+
+CTEST_SETUP(Vec_test) {
+    vinit(&data->v);
 }
 
-CTEST(Vec_test, insert_one_element) {
-    Vector v;
-    vinit(&v);
-    vinsert(&v, 10);
-    ASSERT_EQUAL(v.data[0], 10);
+CTEST_TEARDOWN(Vec_test) {
+    vdelete(&data->v);
+}
+
+CTEST2(Vec_test, test_init) {
+    ASSERT_NOT_NULL(data->v.data);
+    ASSERT_EQUAL(data->v.size, 0);
+    ASSERT_EQUAL(data->v.capacity, 16);
+}
+
+CTEST2(Vec_test, insert_one_element) {
+    vinsert(&data->v, 10);
+    ASSERT_EQUAL(data->v.data[0], 10);
 }

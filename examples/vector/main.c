@@ -8,7 +8,6 @@ int main() {
     vinit(&v);
     vinsert(&v, 10);
     vinsert(&v, 20);
-
     for (size_t i = 0; i < v.size; i++)
         printf("Inserted elements: %d\n", v.data[i]);
 
