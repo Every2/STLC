@@ -68,11 +68,12 @@ DEQUE_LINKAGE void DEQUE_dresize(Deque *self) {
         void *tmp = malloc(sizeof(T) * Max(1, 2 * self->size));
         assert(tmp != NULL);
         T *new = tmp;
-        for (size_t i = 0; i < self->size - 1; i++)
+        for (size_t i = 0; i < self->size; i++)
             new[i] = self->data[(self->start + i) % self->capacity];
         ddelete(self);
         self->data = new;
         self->start = 0;
+	self->capacity = self->size * 2;
     }
 }
 
@@ -117,7 +118,7 @@ DEQUE_LINKAGE T DEQUE_dpop_front(Deque *self) {
     if (!dis_empty(self)) {
         T tmp = self->data[self->start];
         self->size--;
-        self->start = (self->start++) % self->capacity;
+        self->start = (self->start + 1) % self->capacity;
         if (self->capacity >= 3 * self->size)
             dresize(self);
         return tmp;
