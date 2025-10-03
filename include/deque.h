@@ -134,9 +134,10 @@ DEQUE_LINKAGE T DEQUE_dpop_front(Deque *self) {
 #undef DEQUE_ddelete
 #undef DEQUE_dis_empty
 #undef DEQUE_dresize
-#undef DEQUE_dpush
-#undef DEQUE_dpop
-#undef DEQUE_dtop
+#undef DEQUE_dpush_back
+#undef DEQUE_dpush_front
+#undef DEQUE_dpop_back
+#undef DEQUE_dpop_front
 #ifdef DEQUE_DECLS_ONLY
 #undef DEQUE_DECLS_ONLY
 #endif
