@@ -19,82 +19,90 @@
 #define LIST_LINKAGE static inline
 #endif
 
+typedef struct Node Node;
 typedef struct List List;
 
-struct List {
+struct Node {
     T data;
-    List *next;
+    Node *next;
+};
+
+struct List {
+    Node *head;
+    Node *tail;
+    size_t size;
 };
 
 #define LIST_lnew_node IMPL_METHOD(lnew_node)
+#define LIST_linit IMPL_METHOD(linit)
 #define LIST_lis_empty IMPL_METHOD(lis_empty)
+#define LIST_lpush IMPL_METHOD(lpush)
+#define LIST_lpop IMPL_METHOD(lpop)
 #define LIST_ldelete IMPL_METHOD(ldelete)
-#define LIST_lpush_back IMPL_METHOD(lpush_back)
-#define LIST_lpush_front IMPL_METHOD(lpush_front)
-#define LIST_ldelete_back IMPL_METHOD(ldelete_back)
-#define LIST_ldelete_front IMPL_METHOD(ldelete_front)
 
 #ifdef LIST_DECLS_ONLY
 
-LIST_LINKAGE List LIST_lnew_node(T element);
-LIST_LINKAGE bool LIST_lis_empty(List **self);
-LIST_LINKAGE void LIST_lpush_back(List **self, T element);
-LIST_LINKAGE void LIST_lpush_front(List **self, T element);
-LIST_LINKAGE void LIST_ldelete_back(List **self);
-LIST_LINKAGE viud LIST_ldelete_front(List **self);
+LIST_LINKAGE Node LIST_lnew_node(T element);
+LIST_LINKAGE void LIST_linit(List *self);
+LIST_LINKAGE bool lis_empty(List *self);
+LIST_LINKAGE T LIST_lpush(List *self, T element);
+LIST_LINKAGE T LIST_lpop(List *self);
+LIST_LINKAGE void LIST_ldelete(List *self);
 #else
-LIST_LINKAGE List *LIST_lnew_node(T element) {
-    List *new_node = (List *) malloc(sizeof(List));
+LIST_LINKAGE Node *LIST_lnew_node(T element) {
+    Node *new_node = (Node *) malloc(sizeof(Node));
     new_node->data = element;
     new_node->next = NULL;
     return new_node;
 }
 
-LIST_LINKAGE bool LIST_lis_empty(List **self) {
-    return *self == NULL;
+LIST_LINKAGE void LIST_linit(List *self) {
+    self->head = NULL;
+    self->tail = NULL;
+    self->size = 0;
 }
 
-LIST_LINKAGE void LIST_lpush_back(List **self, T element) {
-    List *new_node = lnew_node(element);
-    if (lis_empty(self)) {
-        *self = new_node;
-    } else {
-        List *tmp = *self;
-        while (tmp->next != NULL)
-            tmp = tmp->next;
-        tmp->next = new_node;
-    }
+LIST_LINKAGE bool lis_empty(List *self) {
+    return self->size == 0;
 }
 
-LIST_LINKAGE void LIST_lpush_front(List **self, T element) {
-    List *new_node = lnew_node(element);
-    new_node->next = *self;
-    *self = new_node;
-}
+LIST_LINKAGE T LIST_lpush(List *self, T element) {
+    Node *node = lnew_node(element);
+    node->next = self->head;
+    self->head = node;
 
-LIST_LINKAGE void LIST_ldelete_back(List **self) {
     if (lis_empty(self))
-        return;
+        self->tail = node;
 
-    if ((*self)->next == NULL) {
-        free(*self);
-        *self = NULL;
-        return;
-    }
+    self->size++;
 
-    List *tmp = *self;
-    while (tmp->next->next != NULL)
-        tmp = tmp->next;
-    free(tmp->next);
-    tmp->next = NULL;
+    return element;
 }
 
-LIST_LINKAGE void LIST_ldelete_front(List **self) {
-    if (!lis_empty(self)) {
-        List *tmp = *self;
-        *self = (*self)->next;
-        free(tmp);
+LIST_LINKAGE T LIST_lpop(List *self) {
+    assert(!lis_empty(self));
+    T tmp = self->head->data;
+    Node *node = self->head;
+    self->head = self->head->next;
+    free(node);
+
+    if (self->size - 1 == 0)
+        self->tail = NULL;
+    else
+        self->size = self->size - 1;
+
+    return tmp;
+}
+
+LIST_LINKAGE void LIST_ldelete(List *self) {
+    assert(!lis_empty(self));
+    Node *next = self->head;
+    while (next->next != NULL) {
+        Node *tmp = next->next;
+        free(next);
+        next = tmp;
     }
+    free(self->tail);
 }
 
 #endif
@@ -103,13 +111,11 @@ LIST_LINKAGE void LIST_ldelete_front(List **self) {
 #undef List
 #undef LIST_LINKAGE
 #undef LIST_lnew_node
-#undef LIST_ldelete
+#undef LIST_linit
+#undef LIST_lpush
+#undef LIST_lpop
 #undef LIST_lis_empty
-#undef LIST_dresize
-#undef LIST_lpush_back
-#undef LIST_lpush_front
-#undef LIST_ldelete_back
-#undef LIST_ldelete_front
+#undef LIST_ldelete
 #ifdef LIST_DECLS_ONLY
 #undef LIST_DECLS_ONLY
 #endif

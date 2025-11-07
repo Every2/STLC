@@ -2,14 +2,19 @@
 #include "../../include/list.h"
 
 int main() {
-  List* l = NULL;
-  lpush_back(&l, 1);
-  lpush_front(&l, 2);
-  lpush_back(&l, 3);
-  while (l != NULL) {
-    printf("%d -> \n", l->data);
-    l = l->next;
+  List l;
+  linit(&l);
+  lpush(&l, 1);
+  lpush(&l, 2);
+  lpush(&l, 3);
+  lpush(&l, 4);
+  lpush(&l, 5);
+  lpush(&l, 6);
+  Node* tmp = l.head;
+  while (tmp != NULL) {
+    printf("%d -> ", tmp->data);
+    tmp = tmp->next;
   }
-
-  ldelete_front(&l);
+  printf("\n");
+  ldelete(&l);
 }
